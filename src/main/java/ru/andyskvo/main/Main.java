@@ -31,6 +31,10 @@ public class Main {
         int openTagIndex = allStrings.indexOf('[') + 1;
         String openTag = allStrings.substring(0, openTagIndex);
 
+        if (openTag.contains("phpreturn")) {
+            openTag = openTag.replace("php", "php\n");
+        }
+
         int closeTagIndex = allStrings.indexOf(']');
         String closeTag = allStrings.substring(closeTagIndex);
 
