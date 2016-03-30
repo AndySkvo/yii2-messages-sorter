@@ -38,7 +38,7 @@ public class Main {
         int closeTagIndex = allStrings.indexOf(']');
         String closeTag = allStrings.substring(closeTagIndex);
 
-        String dict = allStrings.substring(openTagIndex, closeTagIndex);
+        String dict = allStrings.substring(openTagIndex, closeTagIndex).trim();
 
         String[]allPairs = dict.split(",");
         LinkedList<String> list = new LinkedList<>();
