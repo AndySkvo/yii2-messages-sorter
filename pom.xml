@@ -13,7 +13,7 @@
         <jdk.version>1.8</jdk.version>
         <github.global.server>github</github.global.server>
         <github.maven-plugin>0.9</github.maven-plugin>
-        <name>yii2-messages-sorter-${version}</name>
+        <name>yii2-messages-sorter</name>
     </properties>
 
     <build>
