@@ -41,14 +41,10 @@ public class Main {
         String dict = allStrings.substring(openTagIndex, closeTagIndex).trim();
 
         String[]allPairs = dict.split(",");
-        LinkedList<String> list = new LinkedList<>();
-        for (String pair : allPairs) {
-            list.add(pair);
-        }
 
         TreeMap<String, String> map = new TreeMap<>();
 
-        for (String pair : list) {
+        for (String pair : allPairs) {
             String[] arr = pair.split("=>");
             String key = arr[0].replace("'", "").trim();
             String val = arr[1].replaceAll("'", "").trim();
