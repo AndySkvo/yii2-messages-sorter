@@ -19,7 +19,7 @@ public class Main {
 
         Path path = Paths.get(fileName);
         Charset charset = Charset.forName("UTF-8");
-        //BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
+
         try(BufferedReader bufferedReader = Files.newBufferedReader(path, charset)) {
             String lineContents;
             String allStrings = "";
@@ -44,13 +44,14 @@ public class Main {
             TreeMap<String, String> map = new TreeMap<>();
 
             for (String pair : allPairs) {
+                pair = pair.replaceAll("'", "");
                 String[] arr = pair.split("=>");
-                String key = arr[0].replace("'", "").trim();
-                String val = arr[1].replaceAll("'", "").trim();
+                String key = arr[0].trim();
+                String val = arr[1].trim();
                 map.put(key, val);
             }
-            //PrintWriter printWriter = new PrintWriter(new FileWriter(fileName));
-            try(PrintWriter printWriter = new PrintWriter(Files.newBufferedWriter(path))) {
+
+            try(PrintWriter printWriter = new PrintWriter(Files.newBufferedWriter(path, charset))) {
                 printWriter.println(openTag);
                 for (Map.Entry<String, String> p : map.entrySet()) {
                     printWriter.println("    '" + p.getKey() + "' => '" + p.getValue() + "',");
