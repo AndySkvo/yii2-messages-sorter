@@ -3,10 +3,11 @@ package ru.andyskvo.main;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -14,13 +15,45 @@ import java.util.TreeMap;
  * Created by Skvorcov on 30.03.2016.
  */
 public class Main {
+    private static LinkedList<Path> fileList = new LinkedList<>();
+
     public static void main(String[] args) {
-        String fileName = args[0].trim();
+        try {
+            final String URI = args[0].trim();
+            if (validDirectory(URI)) {
+                Path path = Paths.get(URI);
+                findFiles(path);
+                for (Path p : fileList) {
+                    System.out.print(p);
+                    sortMessages(p);
+                    System.out.println(" SUCCESS!");
+                }
+            } else {
+                System.out.println(URI + "is not directory");
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Empty argument");
+        }
+    }
 
-        Path path = Paths.get(fileName);
-        Charset charset = Charset.forName("UTF-8");
+    private static void findFiles(Path path) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)) {
+            for (Path file : directoryStream) {
+                if (Files.isDirectory(file)) {
+                    //is directory
+                    findFiles(file);
+                } else {
+                    //is file
+                    fileList.add(file);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+    }
 
-        try(BufferedReader bufferedReader = Files.newBufferedReader(path, charset)) {
+    private static void sortMessages(Path path) {
+        try (BufferedReader bufferedReader = Files.newBufferedReader(path)) {
             String lineContents;
             String allStrings = "";
             while ((lineContents = bufferedReader.readLine()) != null) {
@@ -39,7 +72,7 @@ public class Main {
 
             String dict = allStrings.substring(openTagIndex, closeTagIndex).trim();
 
-            String[]allPairs = dict.split(",");
+            String[] allPairs = dict.split(",");
 
             TreeMap<String, String> map = new TreeMap<>();
 
@@ -51,7 +84,7 @@ public class Main {
                 map.put(key, val);
             }
 
-            try(PrintWriter printWriter = new PrintWriter(Files.newBufferedWriter(path, charset))) {
+            try (PrintWriter printWriter = new PrintWriter(Files.newBufferedWriter(path))) {
                 printWriter.println(openTag);
                 for (Map.Entry<String, String> p : map.entrySet()) {
                     printWriter.println("    '" + p.getKey() + "' => '" + p.getValue() + "',");
@@ -65,5 +98,14 @@ public class Main {
         } catch (IOException e) {
             System.out.println("File " + path + " not found");
         }
+    }
+
+    private static boolean validDirectory(String uri) {
+        String msg = "messages";
+        int msgIndex = uri.indexOf(msg);
+        if (msgIndex > -1) {
+            return true;
+        }
+        return false;
     }
 }
